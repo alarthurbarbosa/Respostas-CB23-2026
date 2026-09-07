@@ -6,7 +6,7 @@
 
 Resposta:
 
-Começando de cima para baixo, veja que funcionario é uma pessoa, então, Funcionario herda de a classe de Pessoa. Garçom, Gerente e Chefe de cozinha são classes de funcionários de um lugar, então Garçom herda a classe Funcionário, e a classe Funcionário herda Pessoa, o mesmo acontece com Gerente e com Chefe de Cozinha, então Gerente, Garçom e Chefe de cozinha são subclasses de Funcionário e Funcionário é sub classe de Pessoa. E veja que Funcionário é subclasse de Pessoa
+Começando de cima para baixo, veja que funcionario é uma pessoa, então, Funcionario herda da classe de Pessoa. Garçom, Gerente e Chefe de cozinha são classes de funcionários de um lugar, então Garçom herda a classe Funcionário, e a classe Funcionário herda Pessoa, o mesmo acontece com Gerente e com Chefe de Cozinha, então Gerente, Garçom e Chefe de cozinha são subclasses de Funcionário e Funcionário é sub classe de Pessoa. E veja que Funcionário é subclasse de Pessoa
 então Funcionário herda nome e idade. Chefe de Cozinha herda salário, carga horário e ganha a ação de preparar. Garçom herda salário, carga horária, idade e nome e ganha a ação de anotar pedido. Gerente herda salário, carga horária, idade e nome e ganha a ação de demitir.
 
 Pessoa <-- Funcionário <-- Garçom  
@@ -23,7 +23,7 @@ E Iguaria é herdado pelas classes Pizza e Bolo, que são subclasses,herdam nome
 
 Iguaria <-- Pizza
 
-Iguaria <--> Bolo
+Iguaria <-- Bolo
 
 ---
 
