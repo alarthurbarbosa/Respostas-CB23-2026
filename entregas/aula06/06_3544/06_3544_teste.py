@@ -1,6 +1,6 @@
 
 qual_class = input("Digite a questão que deseja testar (2.1 ou 2.2): ")
-    # Teste Questao 2.1
+    
 import importlib
 modulo_pilha = importlib.import_module("06_3544_pilha_encadeada")
 PilhaEncadeada = modulo_pilha.PilhaEncadeada
