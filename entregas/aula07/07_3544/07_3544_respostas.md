@@ -1,0 +1,3 @@
+# Resposta Questão 2
+
+A BFS explora o grafo por níveis de distância (camadas). Ela verifica primeiro todas as células a 1 passo de distância, depois a 2 passos, e assim por diante. Por causa dessa característica, no exato momento em que o queijo é encontrado, garantimos que o caminho percorrido é o mais curto possível (menor número de passos). Mesmo em labirintos perfeitos (onde só existe um único caminho simples entre dois pontos), a BFS leva vantagem na prática por se espalhar radialmente a partir da origem. Se o objetivo estiver próximo do início, a BFS o descobre rápido. A DFS, por outro lado, se começar escolhendo a direção errada, pode percorrer quase todo o labirinto antes de encontrar o queijo.
