@@ -1,60 +1,58 @@
 
-qual_class = input("Digite a questão que deseja testar (2.1 ou 2.2): ")
-    # Teste Questao 2.1
 import importlib
+import unittest
+
 modulo_pilha = importlib.import_module("06_3544_pilha_encadeada")
 PilhaEncadeada = modulo_pilha.PilhaEncadeada
 
-import importlib 
 modulo_fila = importlib.import_module("06_3544_fila_encadeada")
 FilaEncadeada = modulo_fila.FilaEncadeada
 
-if qual_class == "2.1":
-    # Teste Questao 2.1
 
-    # Pilha com nós
+class TestEstruturasDeDados(unittest.TestCase):
 
-    a = PilhaEncadeada()
-    a.push(40)
-    a.push(30)
-    a.push(20)
-    tirar = a.pop()
+    def test_questao_2_1_pilha(self):
+        # Teste: Pilha com elementos
+        a = PilhaEncadeada()
+        a.push(40)
+        a.push(30)
+        a.push(20)
 
-    print(tirar)
-    print(a.esta_vazia())
-    print(a.len())
-    print(a.topo())
-    print(a.repr())
+        tirar = a.pop()
+        self.assertEqual(tirar, 20)
+        self.assertFalse(a.esta_vazia())
+        self.assertEqual(a.len(), 2)
+        self.assertEqual(a.topo(), 30)
+        self.assertEqual(a.repr(), "30 -> 40")
 
-    # Pilha vazia
-    b = PilhaEncadeada()
-    print(b.esta_vazia())
-    print(b.len())
-    print(b.topo())
+        # Teste: Pilha vazia
+        b = PilhaEncadeada()
+        self.assertTrue(b.esta_vazia())
+        self.assertEqual(b.len(), 0)
 
-    
+        with self.assertRaises(IndexError):
+            b.topo()
+
+    def test_questao_2_2_fila(self):
+        # Teste: Fila com elementos
+        c = FilaEncadeada()
+        c.enfileirar(10)
+        c.enfileirar(20)
+        c.enfileirar(30)
+
+        self.assertEqual(c.desenfileirar(), 10)
+        self.assertEqual(c.frente(), 20)
+        self.assertFalse(c.esta_vazia())
+        self.assertEqual(c.len(), 2)
+
+        # Teste: Fila vazia
+        d = FilaEncadeada()
+        self.assertTrue(d.esta_vazia())
+        self.assertEqual(d.len(), 0)
+
+        with self.assertRaises(IndexError):
+            d.frente()
 
 
-else:
-    # Teste Questao 2.2
-
-    # Fila com pilhas
-
-    c = FilaEncadeada()
-
-    c.enfileirar(10)
-    c.enfileirar(20)
-    c.enfileirar(30)
-
-    print(c.desenfileirar())
-    print(c.frente())
-    print(c.esta_vazia())
-    print(c.len())
-    print(c.repr())
-    print()
-
-    # Fila vazia
-    d = FilaEncadeada()
-    print(d.esta_vazia())
-    print(d.len())
-    print(d.frente())
+if __name__ == "__main__":
+    unittest.main()
