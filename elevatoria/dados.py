@@ -19,6 +19,7 @@ import numpy as np
 from elevatoria.serie import SerieTemporal
 from fornecido.cronometro import cronometrar
 
+
 # ---------------------------------------------------------------------------------------
 # Issue #1: leitor do log
 # ---------------------------------------------------------------------------------------
@@ -31,7 +32,7 @@ LINHA = re.compile(
     (?P<hora>[0-9]{2}:[0-9]{2}:[0-9]{2})\s+
     (?P<nivel>[A-Z]+)\s+
     (?P<tag>[A-Z]{1,2}[0-9]{1,3})\s+
-    (?P<resto>contagens=[0-9]+)
+    (?P<resto>.+)
     $
     """,
     re.VERBOSE)
@@ -52,7 +53,7 @@ def valida_tag(s: str) -> bool:
     
 
 def ler_log(texto: str) -> tuple[list[Registro], list[str]]:    
-    registro = []
+    registros = []
     invalidas = []
 
     for linha in texto.splitlines():
@@ -62,15 +63,23 @@ def ler_log(texto: str) -> tuple[list[Registro], list[str]]:
         if match:
             dados = match.groupdict()
             if valida_tag(dados["tag"]):
+                valores = {}
                 data_hora_str = f"{dados['data']} {dados['hora']}"
                 instante_dt = datetime.strptime(data_hora_str, "%Y-%m-%d %H:%M:%S")
-                contagem_val = int(dados["resto"].split('=')[1])
+            
+                for par in dados["resto"].split():
+                    chave, valor_raw = par.split('=', 1)
+                    try:
+                        valor = float(valor_raw)
+                    except ValueError:
+                        valor = valor_raw
+                    valores[chave] = valor    
 
                 reg = Registro(
-                    instante = instante_dt
+                    instante = instante_dt,
                     nivel = dados["nivel"],
-                    tag = dadps["tag"],
-                    valores = {"contagens": contagem_val}
+                    tag = dados["tag"],
+                    valores = valores
                 )
                 registros.append(reg)
 
@@ -79,27 +88,11 @@ def ler_log(texto: str) -> tuple[list[Registro], list[str]]:
         else:
             invalidas.append(linha)
             
-    return registro, invalidas
+    return registros, invalidas
 
 
 
-    """Lê o texto do log e devolve `(registros, invalidas)`.
-
-    - `registros`: lista de `Registro`, na ordem em que as linhas aparecem no texto;
-    - `invalidas`: lista das linhas descartadas, exatamente como estavam no texto.
-    Regras:
-    - linhas vazias (ou só com espaços) são ignoradas e não contam como inválidas;
-    - uma linha é inválida se não casar com `LINHA` (com `fullmatch`), se a data ou a hora
-      forem impossíveis (por exemplo, mês 13) ou se o `resto` não tiver nenhum par
-      chave=valor;
-    - `instante` vem de `datetime.strptime` aplicado a `data` e `hora`;
-    - os pares são extraídos do grupo `resto` com o padrão `(\\w+)=(\\S+)`; cada valor vira
-      `float` quando a conversão é possível e continua `str` nos demais casos
-      (`contagens=1623` vira `1623.0`; `evento=partida` continua `"partida"`);
-    - texto vazio devolve `([], [])`.
-    """
-    raise NotImplementedError("issue #1: ler_log")
-
+    
 
 def por_tag(registros: list[Registro], tag: str) -> list[Registro]:
     """Registros da `tag`, na ordem original."""
@@ -107,22 +100,23 @@ def por_tag(registros: list[Registro], tag: str) -> list[Registro]:
 
 
 def contagem_por_tag(registros: list[Registro]) -> dict[str, int]:
-    """Dicionário tag -> número de registros.
-
-    Use uma compreensão de dicionário sobre o conjunto das tags, obtido por uma compreensão
-    de conjunto. Lista vazia devolve `{}`.
-    """
-    raise NotImplementedError("issue #1: contagem_por_tag")
+    tags = {}
+    for r in registros:
+        if r.tag in tags:
+            tags[r.tag] += 1
+        else:
+            tags[r.tag] = 1
+    return tags
 
 
 def serie(registros: list[Registro], tag: str, chave: str) -> SerieTemporal:
-    """`SerieTemporal` com o valor de `chave` dos registros da `tag` que têm essa chave.
+    valores = []
+    for i in registros:
+        if i.tag == tag and chave in i.valores:
+            valores.append(i.valores[chave])
 
-    Os registros da tag sem essa chave (por exemplo, os alarmes de PT102, que não têm
-    `contagens`) são ignorados. Crie a série com `SerieTemporal.de_lista`.
-    """
-    raise NotImplementedError("issue #1: serie")
-
+    return SerieTemporal.de_lista(valores)
+            
 
 # ---------------------------------------------------------------------------------------
 # Issue #2: conversores por tag
